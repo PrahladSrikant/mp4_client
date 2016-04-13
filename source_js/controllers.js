@@ -28,9 +28,17 @@ mp4Controllers.controller('UserListController', ['$scope', '$http', 'CommonData'
       });
 
     $scope.toDelete = "";
+
     $scope.deleteUser = function (userID){
-      CommonData.deleteUser(userID);
-      $scope.isDisabled[userID] = true; //disable this button
+      CommonData.deleteUser(userID)
+        .success(function(data) {
+          $scope.isDisabled[userID] = true; //disable this button
+        })
+        .error(function(err) {
+          console.log('Error: ' + err.message);
+        });      
+
+
     }
 
 }]);
@@ -40,8 +48,19 @@ mp4Controllers.controller('TaskListController', ['$scope', '$http', 'CommonData'
 
   var startidx = 0;
   var endidx = 10;
+  $scope.displayText = "";
   $scope.disablePrev = true;
-  $scope.disableNext = false;
+  $scope.disableNext = true;
+
+  $scope.orderOptions = [ 
+  { optionId: "dateCreated", optionName: "Date Created" }, 
+  { optionId: "deadline", optionName: "Deadline" },
+  { optionId: "name", optionName: "Task Name" },
+  { optionId: "assignedUserName", optionName: "User Name" }
+  ];
+  $scope.selectedOrder = "dateCreated";
+  $scope.sortAscending = "true";  //set default
+  $scope.filter = "pending";  //set default
 
   CommonData.getTasks().success(function(data){
 
@@ -50,17 +69,17 @@ mp4Controllers.controller('TaskListController', ['$scope', '$http', 'CommonData'
     var numTasks = allTasks.length;
     if (numTasks < 10)
       $scope.disableNext = true;
+    else
+      $scope.disableNext = false;
     console.log("numTasks = " + numTasks);
 
     $scope.nextClick = function(){
       startidx += 10; 
       endidx += 10;
       $scope.tasks = allTasks.slice( Math.min(startidx, numTasks), Math.min(endidx, numTasks) ); //dont run past end of array
-        console.log("startidx = " + startidx);
-        console.log("endidx =" + endidx);
+
       if (endidx >= numTasks){
         $scope.disableNext = true;
-        //endidx = numTasks-1;
         startidx = Math.max(0, endidx-10);
       }
       if (startidx > 0){
@@ -84,15 +103,13 @@ mp4Controllers.controller('TaskListController', ['$scope', '$http', 'CommonData'
 
       $scope.tasks = allTasks.slice(startidx, endidx);
 
-      console.log("startidx = " + startidx);
-      console.log("endidx = " + endidx);
+      //console.log("startidx = " + startidx);
+      //console.log("endidx = " + endidx);
     }
 
-    //console.log($scope.tasks);
   })
   .error(function(err){
-        console.log(err);
-        $scope.displayError = err;
+        $scope.displayText = "Error :" + err.message;
     });
 
 }]);
@@ -110,10 +127,16 @@ mp4Controllers.controller('AddUserController', ['$scope', 'CommonData', function
       console.log("name = " + $scope.newUser.name);
       console.log("email = " + $scope.newUser.email);
 
-      if ($scope.newUser.email){
-        console.log("gonna try to add a user");
-        var returned = CommonData.addUser($scope.newUser);
-        console.log(returned);
+      if ($scope.newUser.email){  //dont try if the email isnt okay
+
+        CommonData.addUser($scope.newUser)
+          .success(function(data){
+            $scope.displayText = 'User added';
+          })
+          .error(function(err) {
+            $scope.displayText = 'Error: ' + err.message;
+          });
+
       }
       
   };
@@ -145,12 +168,17 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$http', 'CommonData',
 
       if ( $scope.selectedUser !== ""){ //if user has been selected, get the person's name
         $scope.newTask.assignedUserName = $scope.selectedUser.name;
-
       }
 
-      CommonData.addTask($scope.newTask);
-      $scope.displayText = "Task added";
+      CommonData.addTask($scope.newTask)
+        .success(function(data){
+          $scope.displayText = "Task added";
+        })
+        .error(function(err) {
+          $scope.displayText = 'Error: ' + err;
+      });
 
+  
     }
     
     console.log("name = " + $scope.newTask.name);
@@ -165,17 +193,20 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$http', 'CommonData',
 mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$routeParams', function($scope, CommonData, $routeParams) {
 
   $scope.user = "";
-  $scope.pendingTasks = {};
+ // $scope.pendingTasks = {};
 
   CommonData.getUserDetail($routeParams._id)
     .success(function(data){
-
         $scope.user = data.data[0]; //data returns message+data, data.data just returns data component w/o message
         $scope.pendingTasks = $scope.user.pendingTasks;
+        /*console.log("user = " + $scope.user);
+        console.log("user keys = " + Object.keys($scope.user));
+        console.log("user.pendingTasks = " + $scope.user.pendingTasks);
+        console.log("pendingTasks = " + $scope.pendingTasks);*/
       })
     .error(function(err){
           console.log(err);
-          $scope.displayError = err;
+          $scope.displayText = err.message;
       });
 
 }]);
@@ -183,16 +214,16 @@ mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$rou
 //Task Detail
 mp4Controllers.controller('TaskDetailController', ['$scope', 'CommonData', '$routeParams', function($scope, CommonData, $routeParams) {
 
-  $scope.task = "";
+  $scope.task = {};
+  $scope.displayText = "";
 
   CommonData.getTaskDetail($routeParams._id)
     .success(function(data){
         $scope.task = data.data[0]; //data returns message+data, data.data just returns data component w/o message
-        //$scope.pendingTasks = $scope.user.pendingTasks;
       })
     .error(function(err){
           console.log(err);
-          $scope.displayError = err;
+          $scope.displayText = err.message;
       });
 
 }]);

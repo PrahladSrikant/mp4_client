@@ -1,10 +1,18 @@
-<div class="list" ng-controller='TaskDetailController'>		
+<div class="row text-centered" ng-controller='TaskDetailController'>		
 
-	<h1> {{task.name}} </h1>
-	<h3> {{task.description}} </h3>
-	<ul>
-		<li>Assigned to {{task.assignedUserName}}</li>
-		<li>Deadline: {{task.deadline}}</li>
-	</ul>
+	<div class="columns small-12">
+		{{ displayText }}
+	</div>
+
+	<div class="columns small-12">
+
+		<h1> {{task.name}} </h1>
+		<h3> {{task.description}} </h3>
+		<ul class = "list">
+			<li>Assigned to {{task.assignedUserName}}</li>
+			<li>Deadline: {{task.deadline | date:'MM/dd/yyyy'}}</li>
+		</ul>
+
+	</div>
 
 </div>

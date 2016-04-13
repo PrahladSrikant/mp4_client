@@ -24,32 +24,19 @@ mp4Services.factory('CommonData', function($http, $window){
             return retval;
         },        
         addUser : function(newUser) {  
-            $http.post(baseUrl + '/api/users', newUser)
-                .success(function(data){
+            return $http.post(baseUrl + '/api/users', newUser);
+               /* .success(function(data){
                     console.log('Successfully added user');
                 })
                 .error(function(err) {
                     console.log('Error: ' + err);
-                });
+                })*/
         },
         deleteUser : function(id){
-            $http.delete(baseUrl + '/api/users/' + id)
-                .success(function(data) {
-                    //$scope.todos = data;
-                    console.log("data: " + data);
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
+            return $http.delete(baseUrl + '/api/users/' + id);
         },
         addTask : function(newTask) {  
-            $http.post(baseUrl + '/api/tasks', newTask)
-                .success(function(data){
-                    console.log('Successfully added task');
-                })
-                .error(function(err) {
-                    console.log('Error: ' + err);
-                });
+            return $http.post(baseUrl + '/api/tasks', newTask)
         },
         deleteTask : function(id){
             $http.delete(baseUrl + '/api/tasks/' + id)

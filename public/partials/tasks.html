@@ -5,22 +5,41 @@
 	</div>
 
 	<div class="row text-center">
+		<div class = "columns small-4">
+			<label for="filter">Filter:</label>
+			<input type="radio" ng-model="filter" value="pending" /> Pending <br>
+			<input type="radio" ng-model="filter" value="completed" /> Completed <br>
+			<input type="radio" ng-model="filter" value="all" /> All Tasks <br>
 
-			<a class="button" ng-click="prevClick()" ng-disabled="disablePrev">
-				Prev
-			</a>
+		</div>
+		<div class = "columns small-4">
+			<label for="orderBy">Order By:</label>
+			<select name="orderBy" id="orderBy" ng-model="selectedOrder">
+				<option ng-repeat="option in orderOptions" value="{{option.optionId}}">{{option.optionName}}</option>
+		    </select>
 
-			<a class="button" ng-click="nextClick()" ng-disabled="disableNext">
-				Next
-			</a>
+		</div>
+		<div class = "columns small-4">
+			<label for="sort">Sort:</label>
+			<input type="radio" ng-model="sortAscending" value="true" /> Ascending <br>
+			<input type="radio" ng-model="sortAscending" value="false" /> Descending
+		</div>
+	</div>
 
+	<div class="row text-center">
+		<a class="button" ng-click="prevClick()" ng-disabled="disablePrev">
+			Prev
+		</a>
+		<a class="button" ng-click="nextClick()" ng-disabled="disableNext">
+			Next
+		</a>
 	</div>
 
 	<div class="row text-center">
 
 		<span class = "lighttext"> <p>{{displayError}}</p> </span>
 
-		<div class = "left columns small-4">
+		<div class = "columns small-4">
 			<h3>Task</h3>
 		</div>
 
