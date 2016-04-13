@@ -38,9 +38,57 @@ mp4Controllers.controller('UserListController', ['$scope', '$http', 'CommonData'
 //Task List
 mp4Controllers.controller('TaskListController', ['$scope', '$http', 'CommonData', '$window' , function($scope, $http, CommonData, $window) {
 
+  var startidx = 0;
+  var endidx = 10;
+  $scope.disablePrev = true;
+  $scope.disableNext = false;
+
   CommonData.getTasks().success(function(data){
-    $scope.tasks = data.data; //data returns message+data, data.data just returns data component w/o message
-    console.log($scope.tasks);
+
+    var allTasks = data.data; //data returns message+data, data.data just returns data component w/o message
+    $scope.tasks = allTasks.slice(startidx, endidx);
+    var numTasks = allTasks.length;
+    if (numTasks < 10)
+      $scope.disableNext = true;
+    console.log("numTasks = " + numTasks);
+
+    $scope.nextClick = function(){
+      startidx += 10; 
+      endidx += 10;
+      $scope.tasks = allTasks.slice( Math.min(startidx, numTasks), Math.min(endidx, numTasks) ); //dont run past end of array
+        console.log("startidx = " + startidx);
+        console.log("endidx =" + endidx);
+      if (endidx >= numTasks){
+        $scope.disableNext = true;
+        //endidx = numTasks-1;
+        startidx = Math.max(0, endidx-10);
+      }
+      if (startidx > 0){
+        $scope.disablePrev = false;
+      }
+    }
+
+    $scope.prevClick = function(){
+      startidx -= 10; 
+      endidx -= 10;
+      //$scope.tasks = allTasks.slice( Math.max(startidx, 0), Math.max(endidx, 0));
+      
+      if (startidx <= 0){
+        $scope.disablePrev = true;
+        startidx = 0;
+        endidx = Math.min(startidx+10, numTasks-1);
+      }
+      if (endidx < numTasks-1){
+        $scope.disableNext = false;
+      }
+
+      $scope.tasks = allTasks.slice(startidx, endidx);
+
+      console.log("startidx = " + startidx);
+      console.log("endidx = " + endidx);
+    }
+
+    //console.log($scope.tasks);
   })
   .error(function(err){
         console.log(err);

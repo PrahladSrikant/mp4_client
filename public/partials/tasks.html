@@ -2,6 +2,17 @@
 
 	<div class="row text-center">
 		<h1>Tasks</h1>
+	</div>
+
+	<div class="row text-center">
+
+			<a class="button" ng-click="prevClick()" ng-disabled="disablePrev">
+				Prev
+			</a>
+
+			<a class="button" ng-click="nextClick()" ng-disabled="disableNext">
+				Next
+			</a>
 
 	</div>
 
@@ -9,15 +20,19 @@
 
 		<span class = "lighttext"> <p>{{displayError}}</p> </span>
 
-		<div class = "columns small-4">
+		<div class = "left columns small-4">
 			<h3>Task</h3>
 		</div>
 
-		<div class = "columns small-4">
-			<h3>Assigned To</h3>
+		<div class = "columns small-3">
+			<h3>Assigned to</h3>
 		</div>
 
-		<div class = "columns small-4">
+		<div class = "columns small-3">
+			<h3>Deadline</h3>
+		</div>
+
+		<div class = "columns small-2">
 			<a class="button success" href="#/addtask">
 				Add Task
 			</a>
@@ -32,12 +47,17 @@
 						<b>{{ task.name }}</b>
 					</a>
 				</div>
-				<div class = "columns small-4">
+
+				<div class = "columns small-3">
 					{{ task.assignedUserName }}
 				</div>
 
-				<div class = "columns small-4">
-					<a class="button alert" ng-click="deleteTask(task._id)">
+				<div class = "columns small-3">
+					{{ task.deadline | date:'MM/dd/yyyy' }}
+				</div>
+
+				<div class = "columns small-2">
+					<a class="small button alert" ng-click="deleteTask(task._id)">
 						Delete
 					</a>
 				</div>

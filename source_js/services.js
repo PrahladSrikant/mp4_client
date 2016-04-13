@@ -9,7 +9,7 @@ mp4Services.factory('CommonData', function($http, $window){
             return $http.get(baseUrl + '/api/users?select={"name":1, "_id": 1, "email":1}');
         },
         getTasks : function(){
-            return $http.get(baseUrl + '/api/tasks?select={"name":1, "_id": 1, "assignedUserName":1}');    
+            return $http.get(baseUrl + '/api/tasks?select={"name":1, "_id": 1, "assignedUserName":1, "deadline":1}');    
         }, 
         getUserDetail: function(id) {
             var where = '/api/users?where={\"_id\": \"';
