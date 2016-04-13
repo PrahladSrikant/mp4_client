@@ -1,16 +1,22 @@
-<div class="list" ng-controller='SettingsController'>		
+<div class="list" ng-controller='SettingsController'>	
+
+  <div class="row text-center">
+      <h1>Set URL</h1>
+  </div>
+
 	<form>
-	  <div class="row">
+	  <div class="row text-center">
           <div class="small-12 columns">
             <input ng-model="url" type="text" placeholder="URL">
           </div>
       </div>
 
     <div class="text-center">
-      <button ng-click="setUrl()" class="button tiny info">Set URL</button>
-    </div>
+      <button ng-click="setUrl()" class="button hollow">Set URL</button>
 
-    {{displayText}}
+    <p> {{displayText}} </p>
+
+      </div>
 
   </form>
 </div>

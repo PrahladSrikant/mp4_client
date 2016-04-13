@@ -14,3 +14,5 @@ function highlightThis(event) {
     alert(this.className);
     this.style.backgroundColor=backgroundColor;
 }
+
+$filter('date')(data, 'yyyy-MM-dd', 'UTC');

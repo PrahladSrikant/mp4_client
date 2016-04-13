@@ -1,0 +1,49 @@
+<div class="list" ng-controller='UserListController'>		
+	
+	<div class="row text-center">
+			<h1>Users</h1>
+	</div>
+
+	<div class="row text-center">
+
+		<span class = "lighttext"> <p>{{displayError}}</p> </span>
+
+		<div class = "columns small-4">
+			<h3>Name</h3>
+		</div>
+
+		<div class = "columns small-4">
+			<h3>Email</h3>
+		</div>		
+
+		<div class = "columns small-4">
+			<a class="button success" href="#/adduser">Add User</a>
+		</div>
+
+	</div>
+
+	<ul class = "list">
+
+		<li ng-repeat="user in users">
+			<div class="row text-center userpreview">
+
+				<div class = "columns small-4">
+					<a ng-href = "#/user/{{user._id}}">
+						<h3>{{user.name}}</h3>
+					</a>
+				</div>
+				<div class = "columns small-4">
+					{{user.email}}
+				</div>
+
+				<div class = "columns small-4">
+					<a class="button alert" ng-click="deleteUser(user._id)" ng-disabled="isDisabled[user._id]">
+						Delete
+					</a>
+				</div>
+			</div>
+		</li>
+
+
+	</ul>
+</div>

@@ -1,1 +1,40 @@
-// Add any custom Sass & CSS here
+h1, h2, h3 {
+	text-align: center;
+	font-family: $header-font;
+}
+
+h1{
+	font-size: 3em;
+	font-weight: bold;
+}
+h3{
+	font-size: 1.5em;
+}
+
+.row{
+	padding-top: 20px;
+}
+
+ul.list {
+	list-style: none;
+	text-align: center;
+	padding: 20px;
+}
+
+.userpreview {
+	padding: 20px 0px;
+}
+
+.lighttext{
+	color: $gray;
+}
+
+.req{
+	color: $red;
+	font-weight: bold;
+}
+
+.note{
+	color: $darkgray;
+	font-size: 0.9em;
+}

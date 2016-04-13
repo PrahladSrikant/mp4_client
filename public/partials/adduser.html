@@ -1,0 +1,39 @@
+<div class="list" ng-controller='AddUserController'>		
+
+	<h1>Add User</h1>
+	<form>
+   <div class="row">
+    <div class="small-12 medium-8 large-6 small-centered columns">
+     <label>
+      Name: <span class="req">*</span>
+      <input ng-model="newUser.name" type="text" placeholder="Name" required>
+    </label>
+
+    <label>
+      Email: <span class="req">*</span>
+      <input ng-model="newUser.email" type="email" placeholder="Email" required>
+    </label>
+
+    <div class="note"> 
+      <span class="req">*</span> indicates required field 
+    </div>
+
+  </div>
+</div>
+
+<div class="row small-12 text-center">
+  <button ng-click="addUser()" class="button success hollow">
+    Submit
+  </button>
+</div>
+
+<div class="row small-12 text-center">
+  <span class="lighttext">
+    {{ displayText }}
+  </span>
+</div>
+
+
+</form>
+
+</div>
