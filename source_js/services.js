@@ -8,9 +8,19 @@ mp4Services.factory('CommonData', function($http, $window){
         getUsers : function(){
             return $http.get(baseUrl + '/api/users?select={"name":1, "_id": 1, "email":1}');
         },
-        getTasks : function(){
-            return $http.get(baseUrl + '/api/tasks?select={"name":1, "_id": 1, "assignedUserName":1, "deadline":1}');    
+        getTasks : function(sortBy, ascend, filter){
+            var where = ""; //for all
+            if (filter === "completed")
+                where = '&where={"completed": true}';
+            else if (filter === "pending")
+                where = '&where={"completed": false}';
+            var itemstoget = '/api/tasks?select={"name":1, "_id": 1, "assignedUserName":1, "assignedUser":1, "deadline":1, "completed":1}';
+            var sort = '&sort={"' + sortBy + '": ' + ascend + '}';
+            return $http.get(baseUrl + itemstoget + sort + where);    
         }, 
+        getTaskNames : function(){
+            return $http.get(baseUrl + '/api/tasks?select={"name":1, "_id": 1, "deadline":1, "completed":1}');    
+        },         
         getUserDetail: function(id) {
             var where = '/api/users?where={\"_id\": \"';
             var end = '\"}';
@@ -36,19 +46,30 @@ mp4Services.factory('CommonData', function($http, $window){
             return $http.delete(baseUrl + '/api/users/' + id);
         },
         addTask : function(newTask) {  
-            return $http.post(baseUrl + '/api/tasks', newTask)
+            return $http.post(baseUrl + '/api/tasks', newTask);
         },
         deleteTask : function(id){
-            $http.delete(baseUrl + '/api/tasks/' + id)
-                .success(function(data) {
-                    //$scope.todos = data;
-                    console.log("Deleted task" + data);
-                    console.log("Data's keys = " + Object.keys(data));
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
-        },                
+            return $http.delete(baseUrl + '/api/tasks/' + id);
+        },
+        getUserTasks: function(id) {    //get one user to modify their pendingTasks array
+            var where = '/api/users?where={\"_id\": \"';
+            var end = '\"}';
+            var pendingTasks = '&select={"_id":1, "pendingTasks":1}';
+            var retval = $http.get(baseUrl + where + id.toString() + end + pendingTasks);
+            return retval;
+        },        
+        putUser : function(userID, user){
+            return $http.put(baseUrl + '/api/users/' + userID, user);  //modify a user
+        },
+        putTask: function(taskID, task) { 
+            return $http.put(baseUrl + '/api/tasks/' + taskID, task)    //modify a task
+        },
+        getAllTasksOfUser: function(userID) {    //get all the tasks objects that are assigned to a user
+            var where = '/api/tasks?where={\"assignedUser\": \"';
+            var end = '\"}';
+            var retval = $http.get(baseUrl + where + userID.toString() + end);
+            return retval;
+        },
     };
 });
 

@@ -30,7 +30,7 @@ app.config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/addtask.html',
     controller: 'AddTaskController'
   }).  
-  when('/edittask', {
+  when('/edittask/:_id', {
     templateUrl: 'partials/edittask.html',
     controller: 'EditTaskController'
   }).  

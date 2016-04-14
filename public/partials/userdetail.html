@@ -1,13 +1,40 @@
-<div class="row" ng-controller='UserDetailController'>		
+<div ng-controller='UserDetailController'>		
 
-	<h1> {{user.name}} </h1>
+	<div class="row text-center">
+		{{ displayText }}
+	</div>
 
+	<div class="row text-center">
+		<h1> {{user.name}} </h1>
+	</div>
+
+	<div class="row text-center">
 		<h3>{{user.email}}</h3>
+	</div>
+
+	<div class="row text-center">
 		<h3>Pending Tasks:</h3>
-		<ul>
-			<li ng-repeat="pendingTask in pendingTasks">
-				{{ pendingTask }}
+		<ul class = "list">
+			<li ng-repeat="pendingTaskID in pendingTasks">
+				<a ng-href="#/task/{{pendingTaskID}}"> {{ pendingTaskID }} </a>
 			</li>
 		</ul>
+	</div>
+
+	<div class="row text-center">
+		<a class="button" ng-click="loadCompletedTasks()" ng-disabled="dataNotLoaded" ng-show="!loaded">
+			Load Completed Tasks
+		</a>
+	</div>
+
+	<div class="row text-center" ng-show="loaded">
+		<h3>Completed Tasks:</h3>
+
+		<ul class = "list">
+			<li ng-repeat="completedTask in completedTasks" ng>
+				<a ng-href="#/task/{{completedTask._id}}"> {{ completedTask._name }} </a>
+			</li>
+		</ul>
+	</div>
 
 </div>

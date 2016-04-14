@@ -1,18 +1,35 @@
-<div class="row text-centered" ng-controller='TaskDetailController'>		
+<div ng-controller='TaskDetailController'>		
 
-	<div class="columns small-12">
+	<div class="row text-center">
 		{{ displayText }}
 	</div>
 
-	<div class="columns small-12">
+		<div class="row text-center">
+			<a class="button success" ng-click="completeTask(true)" ng-disabled="task.completed">
+				Completed
+			</a>
 
-		<h1> {{task.name}} </h1>
-		<h3> {{task.description}} </h3>
-		<ul class = "list">
-			<li>Assigned to {{task.assignedUserName}}</li>
-			<li>Deadline: {{task.deadline | date:'MM/dd/yyyy'}}</li>
-		</ul>
+			<a class="button" ng-href="#/edittask/{{task._id}}" ng-disabled="disableEdit">
+				Edit Task
+			</a>
 
+			<a class="button alert" ng-click="completeTask(false)" ng-disabled="!task.completed">
+				Not Completed
+			</a>
+
+		</div>
+
+	<div class="row text-center">
+		<div class="columns small-12">
+
+			<h1> {{task.name}} </h1>
+			<h3> {{task.description}} </h3>
+			<ul class = "list">
+				<li><b>Assigned to:</b> <a ng-href="#/user/{{task.assignedUser}}"> {{task.assignedUserName}} </a></li>
+				<li><b>Deadline:</b> {{task.deadline | date:'MM/dd/yyyy'}}</li>
+			</ul>
+
+		</div>
 	</div>
 
 </div>
