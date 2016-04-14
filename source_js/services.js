@@ -35,12 +35,6 @@ mp4Services.factory('CommonData', function($http, $window){
         },        
         addUser : function(newUser) {  
             return $http.post(baseUrl + '/api/users', newUser);
-               /* .success(function(data){
-                    console.log('Successfully added user');
-                })
-                .error(function(err) {
-                    console.log('Error: ' + err);
-                })*/
         },
         deleteUser : function(id){
             return $http.delete(baseUrl + '/api/users/' + id);
@@ -54,7 +48,8 @@ mp4Services.factory('CommonData', function($http, $window){
         getUserTasks: function(id) {    //get one user to modify their pendingTasks array
             var where = '/api/users?where={\"_id\": \"';
             var end = '\"}';
-            var pendingTasks = '&select={"_id":1, "pendingTasks":1}';
+            //var pendingTasks = '&select={"_id":1, "pendingTasks":1}';
+            var pendingTasks = '';
             var retval = $http.get(baseUrl + where + id.toString() + end + pendingTasks);
             return retval;
         },        
@@ -70,6 +65,18 @@ mp4Services.factory('CommonData', function($http, $window){
             var retval = $http.get(baseUrl + where + userID.toString() + end);
             return retval;
         },
+        getPendingTasks: function(userID){
+            //where={"assignedUser": userID, "completed": false}
+            var where = '/api/tasks?where={"assignedUser": "' + userID + '","completed":false}';
+            var retval = $http.get(baseUrl + where);
+            return retval;
+        },
+        getCompletedTasks: function(userID){
+            //where={"assignedUser": userID, "completed": false}
+            var where = '/api/tasks?where={"assignedUser": "' + userID + '","completed":true}';
+            var retval = $http.get(baseUrl + where);
+            return retval;
+        }        
     };
 });
 

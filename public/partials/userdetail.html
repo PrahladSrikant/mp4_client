@@ -9,17 +9,38 @@
 	</div>
 
 	<div class="row text-center">
-		<h3>{{user.email}}</h3>
+		Email: {{user.email}}
 	</div>
 
 	<div class="row text-center">
-		<h3>Pending Tasks:</h3>
-		<ul class = "list">
-			<li ng-repeat="pendingTaskID in pendingTasks">
-				<a ng-href="#/task/{{pendingTaskID}}"> {{ pendingTaskID }} </a>
-			</li>
-		</ul>
+
+		<h3><b>Pending Tasks:</b></h3>
+		<div class="columns small-4">
+			<h3> Task </h3>
+		</div>
+		<div class="columns small-4">
+			<h3> Deadline </h3>
+		</div>
+		<div class="columns small-4">
+			<h3> Change Status </h3>
+		</div>
 	</div>
+
+		<div class = "row text-center" ng-repeat="pendingTask in pendingTasks">
+
+			<div class="columns small-4">
+				<a ng-href="#/task/{{pendingTask._id}}"> {{ pendingTask.name }} </a>
+			</div>
+			<div class="columns small-4">
+				{{ pendingTask.deadline | date:'MM/dd/yyyy' }}
+			</div>
+			<div class="columns small-4">
+				<a class="button small success" ng-click="markCompleted(pendingTask)">
+					Mark as Completed
+				</a>
+			</div>
+
+		</div>
 
 	<div class="row text-center">
 		<a class="button" ng-click="loadCompletedTasks()" ng-disabled="dataNotLoaded" ng-show="!loaded">
@@ -28,13 +49,35 @@
 	</div>
 
 	<div class="row text-center" ng-show="loaded">
-		<h3>Completed Tasks:</h3>
 
-		<ul class = "list">
-			<li ng-repeat="completedTask in completedTasks" ng>
-				<a ng-href="#/task/{{completedTask._id}}"> {{ completedTask._name }} </a>
-			</li>
-		</ul>
+		<h3><b>Completed Tasks:</b></h3>
+		<div class="columns small-4">
+			<h3> Task </h3>
+		</div>
+		<div class="columns small-4">
+			<h3> Deadline </h3>
+		</div>
+		<div class="columns small-4">
+			<h3> Change Status </h3>
+		</div>
+
+	</div>
+
+		<div class = "row text-center" ng-repeat="completedTask in completedTasks">
+
+			<div class="columns small-4">
+				<a ng-href="#/task/{{completedTask._id}}"> {{ completedTask.name }} </a>
+			</div>
+			<div class="columns small-4">
+				{{ completedTask.deadline | date:'MM/dd/yyyy' }}
+			</div>
+			<div class="columns small-4">
+				<a class="button small alert" ng-click="markNotCompleted(completedTask)">
+					Mark as Not Completed
+				</a>
+			</div>
+
+		</div>
 	</div>
 
 </div>

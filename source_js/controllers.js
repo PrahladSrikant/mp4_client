@@ -141,36 +141,56 @@ mp4Controllers.controller('TaskListController', ['$scope', '$http', 'CommonData'
         console.log("task = " + task);
         console.log("assignedUserName = " + task.assignedUserName);
         console.log("completed? = " + task.completed);
+        console.log("assignedUser? = " + task.assignedUser);        
 
         if (task.assignedUser !== "" && task.completed === false){  //remove pending task from user
           //get user's tasks
-          CommonData.getUserTasks(task.assignedUser).success(function(user) {
+          CommonData.getUserTasks(task.assignedUser).success(function(data) {
               //modify user's tasks
+              console.log("data: " + Object.keys(data));
+              console.log("data.data: " + data.data);
+              user = data.data[0];
+              console.log("user: " + user);
+              console.log("user keys: " + Object.keys(user));
               console.log('Tasks before: ' + user.pendingTasks);
-              user.pendingTasks.splice(indexOf(task._id), 1);
-              console.log('Tasks after: ' + modifiedTasks);
+              if (user.pendingTasks.length > 0){
+                var index = user.pendingTasks.indexOf(task._id);
+                if (index > -1)
+                  user.pendingTasks.splice(index, 1);
+              }
+              console.log('Tasks after: ' + user.pendingTasks);
 
               //put user's modified tasks
               CommonData.putUser(user._id, user).success(function(data) {
                 console.log('Removed task from user');
+
+                CommonData.deleteTask(task._id).success(function(data) { //deleted task from task list
+                  console.log('Task deleted');
+                  console.log('data returned = ' + data);
+                })
+                  .error(function(err) {  //error deleting task
+                    console.log('Error: ' + err.message);
+                  })
+
               })
               .error(function(err) {
-                console.log('Error: ' + err.message);
+                console.log('Error modifying user: ' + err.message);
               })
 
             })
             .error(function(err) {  //error getting user
-              console.log('Error: ' + err.message);
+              console.log('Error getting user: ' + err.message);
             });
           }
 
-        CommonData.deleteTask(task._id).success(function(data) { //deleted task from task list
-          console.log('Task deleted');
-          console.log('data returned = ' + data);
-        })
-          .error(function(err) {  //error deleting task
-            console.log('Error: ' + err.message);
-          })
+          else{
+            CommonData.deleteTask(task._id).success(function(data) { //deleted task from task list
+              console.log('Task deleted');
+              console.log('data returned = ' + data);
+            }).error(function(err) {  //error deleting task
+                console.log('Error: ' + err.message);
+            })
+          }
         };
 
       })
@@ -252,17 +272,17 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$http', 'CommonData',
             CommonData.putUser(user._id, user).success(function(data){
               console.log("Task added to user " + user.name);
             })
-            .error(function(data){
-              console.log("Error: " + err);
+            .error(function(err){
+              console.log("Error: " + err.message);
             })
           })
           .error(function(err){
-            console.log('Error: ' + err);
+            console.log('Error: ' + err.message);
           })
       }
     })
     .error(function(err) {
-      $scope.displayText = 'Error: ' + err;
+      $scope.displayText = 'Error: ' + err.message;
     });
 
   }
@@ -289,15 +309,66 @@ mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$rou
     $scope.pendingTasks = $scope.user.pendingTasks;
     $scope.dataNotLoaded = false;
 
+    $scope.loadPendingTasks = function(){
+
+      //get pending tasks
+      CommonData.getPendingTasks($scope.user._id).success(function(data){
+        $scope.pendingTasks = data.data;
+        console.log(data.data);
+      }).error(function(err){
+          console.log('Error: ' + err.message);
+          $scope.displayText = err.message;
+      })
+    };
+
     $scope.loadCompletedTasks = function(){
-
-      //get request to get completed tasks
-      //CommonData.getCompletedTasks(userID).success(function(data){
         $scope.loaded = true;
-        // do some more stuff
-      //})
-    }
 
+        CommonData.getCompletedTasks($scope.user._id).success(function(data){
+          $scope.completedTasks = data.data;
+          console.log(data.data);
+        }).error(function(err){
+            console.log('Error: ' + err.message);
+            $scope.displayText = err.message;
+        })
+    };
+
+    // Mark a pending task as completed
+    $scope.markCompleted = function(task){
+      task.completed = true;
+
+      // Put task request
+      CommonData.putTask(task._id, task).success(function(data){
+        console.log('Successfully changed task');
+        // Reload pending tasks
+        $scope.loadPendingTasks(); 
+        // Reload completed tasks if they're visible
+        if ($scope.loaded === true)
+          $scope.loadCompletedTasks();
+
+      }).error(function(err){
+          console.log(err.message);
+      })
+
+    };
+
+    //Mark a completed task as pending
+    $scope.markNotCompleted = function(task){
+      task.completed = false;
+
+      // Put task request
+      CommonData.putTask(task._id, task).success(function(data){
+        console.log('Successfully changed task');
+        // Reload pending tasks
+        $scope.loadCompletedTasks(); 
+        $scope.loadPendingTasks();
+      }).error(function(err){
+          console.log(err.message);
+      })
+
+    };
+
+    $scope.loadPendingTasks();
 
       })
  .error(function(err){
