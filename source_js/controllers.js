@@ -344,7 +344,7 @@ mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$rou
         $scope.loadPendingTasks(); 
         // Reload completed tasks if they're visible
         if ($scope.loaded === true)
-          $scope.loadCompletedTasks();
+          $scope.loadCompletedTasks;
 
       }).error(function(err){
           console.log(err.message);
