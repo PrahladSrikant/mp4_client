@@ -5,7 +5,7 @@
 	</div>
 
 	<div class="row text-center">
-		<a class="button" ng-href="#/tasks/{{task._id}}">
+		<a class="button" ng-href="#/task/{{task._id}}">
 			Return to Task
 		</a>
 	</div>
@@ -41,9 +41,21 @@
 			</div>
 
 			<div class="row small-12 text-center">
-				<button ng-click="editTask()" class="button success hollow">
+
+				<a class="button success" ng-click="completeTask(true)" ng-disabled="task.completed">
+					Completed
+				</a>
+
+				<button ng-click="editTask()" class="button hollow">
 					Submit
 				</button>
+
+				<a class="button alert" ng-click="completeTask(false)" ng-disabled="!task.completed">
+					Not Completed
+				</a>
+
+
+
 			</div>
 
 			<div class="row small-12 text-center">

@@ -29,7 +29,7 @@
 		<div class = "row text-center" ng-repeat="pendingTask in pendingTasks">
 
 			<div class="columns small-4">
-				<a ng-href={{"#/tasks/{{pendingTask._id}}"}}> {{ pendingTask.name }} </a>
+				<a ng-href="#/task/{{pendingTask._id}}"> {{ pendingTask.name }} </a>
 			</div>
 			<div class="columns small-4">
 				{{ pendingTask.deadline | date:'MM/dd/yyyy' }}
@@ -66,7 +66,7 @@
 		<div class = "row text-center" ng-repeat="completedTask in completedTasks">
 
 			<div class="columns small-4">
-				<a ng-href="#/tasks/{{completedTask._id}}"> {{ completedTask.name }} </a>
+				<a ng-href="#/task/{{completedTask._id}}"> {{ completedTask.name }} </a>
 			</div>
 			<div class="columns small-4">
 				{{ completedTask.deadline | date:'MM/dd/yyyy' }}

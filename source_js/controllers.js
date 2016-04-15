@@ -406,12 +406,15 @@ mp4Controllers.controller('TaskDetailController', ['$scope', 'CommonData', '$rou
               //Get the pending tasks array of the user this task is assigned to
               CommonData.getUserDetail($scope.task.assignedUser).success(function(data){
                 user = data.data[0];
-                if ($scope.task.completed === true){  //remove from user's pending tasks array
+
+                // Marked as completed so remove from user's pending tasks array
+                if ($scope.task.completed === true){ 
                   var index = user.pendingTasks.indexOf($scope.task._id);
                   user.pendingTasks.splice(index, 1); 
                   console.log("Task removed from user " + user.name);
                 }
-                else {  //add to user's pending tasks array
+                // Marked as not completed so add to user's pending tasks array
+                else { 
                   var index = user.pendingTasks.indexOf($scope.task._id);
                   if (index === -1){
                     user.pendingTasks.push($scope.task._id);
@@ -457,33 +460,64 @@ mp4Controllers.controller('EditTaskController', ['$scope', 'CommonData', '$windo
 
   $scope.displayText = "";
   //Task inputs:
-  $scope.task = { name: "", deadline: "", description: "", assignedUserName: "unassigned"};
+  $scope.task = { name: "", deadline: "", description: "", assignedUserName: "unassigned", completed: false};
+  var wasCompleted = false;
 
   //fill in with previous task details
   CommonData.getTaskDetail($routeParams._id).success(function(data){  
       $scope.task = data.data[0]; //data returns message+data, data.data just returns data component
       $scope.task.deadline = new Date($scope.task.deadline);  // formatting/error prevention
-      //console.log("task.assignedUserName = " + $scope.task.assignedUserName);
       //$scope.selectedUser = { name: $scope.task.assignedUserName, _id: $scope.task.assignedUser };  //set default
-
+      wascompleted = $scope.task.completed; //completed will hold the orig 
 
       // dropdown menu to select assignment:
       CommonData.getUsers().success(function(data){
           $scope.users = data.data; //data returns message+data, data.data just returns data component
+          $scope.users.push( { _id: "", name: "unassigned"} )
           $scope.selectedUser = $scope.users.filter(function (user) { return user._id === $scope.task.assignedUser; })[0];
           console.log("orig selectedUser = " + $scope.selectedUser);
-        })
-      .error(function(err){
+        }).error(function(err){
+            console.log(err);
+            $scope.displayText = 'Error: ' + err.message;
+          }); 
+      }).error(function(err){
         console.log(err);
         $scope.displayText = 'Error: ' + err.message;
-      }); 
+      });  
 
+  var removeTaskFromArray = function(taskID, userID){
+    CommonData.getUserTasks(userID).success(function(data) {
+      //modify user's tasks
+      var user = data.data[0];
+      if (user.pendingTasks.length > 0){
+        var index = user.pendingTasks.indexOf(taskID);
+        if (index > -1)
+          user.pendingTasks.splice(index, 1);
+      }
+      //put user's modified tasks
+      CommonData.putUser(userID, user).success(function(data) {
+        console.log('Removed task from user + ' + user.name);
+      }).error(function(err) {
+          console.log('Error modifying user: ' + err.message);
+        })
 
-    })
-  .error(function(err){
-    console.log(err);
-    $scope.displayText = 'Error: ' + err.message;
-  });  
+      })
+    };
+
+    var addTaskToArray = function(taskID, userID){
+      CommonData.getUserDetail(userID).success(function(data){
+        var user = data.data[0];
+        user.pendingTasks.push(taskID);
+
+        CommonData.putUser(userID, user).success(function(data){
+          console.log("Task added to user " + user.name);
+        }).error(function(err){
+            console.log("Error: " + err.message);
+          })
+        }).error(function(err){
+          console.log('Error: ' + err.message);
+        })
+    };      
 
   $scope.editTask = function(){
 
@@ -491,21 +525,63 @@ mp4Controllers.controller('EditTaskController', ['$scope', 'CommonData', '$windo
 
     console.log("selectedUser = " + $scope.selectedUser._id);
 
-    if ($scope.task.name !== "" && $scope.task.deadline ){  //dont let someone submit without a task name or deadline
+    if ($scope.task.name && $scope.task.deadline ){  //dont let someone submit without a task name or deadline
 
-      if ( $scope.selectedUser.name === ""){ //if no user has been selected
-        $scope.task.assignedUserName = "unassigned";
-        $scope.task.assignedUser = "";
-      }
+        var oldUser = $scope.task.assignedUser;
+        var newUser = $scope.selectedUser._id;
+        var wasPending = !wasCompleted;
+        var nowPending = !$scope.completed;
 
-      else {
-        $scope.task.assignedUser = $scope.selectedUser._id;
-        $scope.task.assignedUserName = $scope.selectedUser.name;
+      // Task was assigned or will be
+      if ( oldUser!=="" || newUser!="" ){
 
+        // No change in user assignment
+        if (oldUser === newUser){
+          console.log('No change in user');
+          // Was in pending, now not pending
+          if ( wasPending && !nowPending ){
+            if ( oldUser !== "" )
+              removeTaskFromArray($scope.task._id, oldUser);
+          }
+          // Was not pending, now add to pending
+          else if ( !wasPending && nowPending ){
+            if ( newUser !== "" )
+              addTaskToArray($scope.task._id, newUser);
+          }
+        }
 
-        // ***************************>>>>>>>>>> REFLECT CHANGES TO USER'S PENDING TASKS ARRAY
+        // Assigned to different user
+        else {
+          console.log('Task changed to different user');
 
+          // In old user's pending tasks, not pending for new user though
+          if ( wasPending && !nowPending ){
+            if ( oldUser !== "" ){
+              removeTaskFromArray($scope.task._id, oldUser);
+            }
+          }
+          // In old user's pending tasks, pending for new user
+          else if ( wasPending && nowPending ){
+            if ( oldUser !== "" )
+              removeTaskFromArray($scope.task._id, oldUser);
+            if ( newUser !== "" )
+              addTaskToArray($scope.task._id, newUser);
+          }
+          // Not in old user's pending tasks, but is pending for new user
+          else if ( !wasPending && nowPending ){
+            if ( newUser!=="" )
+              addTaskToArray($scope.task._id, newUser);
+          }
+          else if ( !wasPending && !nowPending ){
+            //in neither's pending array: do nothing to user arrays
+          }
 
+        }
+          $scope.task.assignedUser = $scope.selectedUser._id;
+          $scope.task.assignedUserName = $scope.selectedUser.name;
+          $scope.task.completed = $scope.completed;
+
+        }
       }
 
       console.log("assigned user: " + $scope.task.assignedUserName);
@@ -517,12 +593,11 @@ mp4Controllers.controller('EditTaskController', ['$scope', 'CommonData', '$windo
         $scope.displayText = err.message;
       });
 
+  };
 
-    }
-    
-    //console.log("name = " + $scope.newTask.name);
-    //console.log("assignedto = " + $scope.newTask.assignedUserName);
-
+  $scope.completeTask = function(bool){
+    console.log(bool);
+    $scope.task.completed = bool;
   };
   
 
