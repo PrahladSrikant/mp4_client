@@ -14,11 +14,11 @@ app.config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/tasks.html',
     controller: 'TaskListController'
   }).
-  when('/user/:_id', {
+  when('/users/:_id', {
     templateUrl: 'partials/userdetail.html',
     controller: 'UserDetailController'
   }).
-  when('/task/:_id', {
+  when('/tasks/:_id', {
     templateUrl: 'partials/taskdetail.html',
     controller: 'TaskDetailController'
   }).

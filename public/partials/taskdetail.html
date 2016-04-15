@@ -25,7 +25,7 @@
 			<h1> {{task.name}} </h1>
 			<h3> {{task.description}} </h3>
 			<ul class = "list">
-				<li><b>Assigned to:</b> <a ng-href="#/user/{{task.assignedUser}}"> {{task.assignedUserName}} </a></li>
+				<li><b>Assigned to:</b> <a ng-href="#/users/{{task.assignedUser}}"> {{task.assignedUserName}} </a></li>
 				<li><b>Deadline:</b> {{task.deadline | date:'MM/dd/yyyy'}}</li>
 			</ul>
 

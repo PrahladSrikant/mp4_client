@@ -316,7 +316,6 @@ mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$rou
         $scope.pendingTasks = data.data;
         console.log(data.data);
       }).error(function(err){
-          console.log('Error: ' + err.message);
           $scope.displayText = err.message;
       })
     };
@@ -328,7 +327,6 @@ mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$rou
           $scope.completedTasks = data.data;
           console.log(data.data);
         }).error(function(err){
-            console.log('Error: ' + err.message);
             $scope.displayText = err.message;
         })
     };
@@ -339,12 +337,13 @@ mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$rou
 
       // Put task request
       CommonData.putTask(task._id, task).success(function(data){
-        console.log('Successfully changed task');
+
         // Reload pending tasks
         $scope.loadPendingTasks(); 
+
         // Reload completed tasks if they're visible
         if ($scope.loaded === true)
-          $scope.loadCompletedTasks;
+          $scope.loadCompletedTasks();
 
       }).error(function(err){
           console.log(err.message);
@@ -368,17 +367,14 @@ mp4Controllers.controller('UserDetailController', ['$scope', 'CommonData', '$rou
 
     };
 
+    //Load pending tasks as soon as user info has loaded
     $scope.loadPendingTasks();
 
       })
- .error(function(err){
-  console.log(err);
-  $scope.displayText = 'Error: ' + err.message;
-});
-
-
- //************ ADD CODE TO GET NAMES & INFO OF PENDING TASKS AND A BUTTON TO SHOW COMPLETED TASKS ************
-
+   .error(function(err){
+    console.log(err);
+    $scope.displayText = 'Error: ' + err.message;
+  });
 
 
 }]);
@@ -505,16 +501,20 @@ mp4Controllers.controller('EditTaskController', ['$scope', 'CommonData', '$windo
       else {
         $scope.task.assignedUser = $scope.selectedUser._id;
         $scope.task.assignedUserName = $scope.selectedUser.name;
+
+
+        // ***************************>>>>>>>>>> REFLECT CHANGES TO USER'S PENDING TASKS ARRAY
+
+
       }
 
       console.log("assigned user: " + $scope.task.assignedUserName);
 
       CommonData.putTask($scope.task._id, $scope.task).success(function(data){
-        console.log("Task edited")
-        $scope.displayText = "Task edited";
+        $scope.displayText = "Changes saved";
       })
       .error(function(err) {
-        $scope.displayText = 'Error: ' + err.message;
+        $scope.displayText = err.message;
       });
 
 
