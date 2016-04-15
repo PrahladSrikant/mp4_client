@@ -3,35 +3,35 @@ var app = angular.module('mp4', ['ngRoute', 'mp4Controllers', 'mp4Services']);
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
     when('/settings', {
-    templateUrl: 'partials/settings.html',
+    templateUrl: './partials/settings.html',
     controller: 'SettingsController'
   }).  
     when('/users', {
-    templateUrl: 'partials/users.html',
+    templateUrl: './partials/users.html',
     controller: 'UserListController'
   }).
   when('/tasks', {
-    templateUrl: 'partials/tasks.html',
+    templateUrl: './partials/tasks.html',
     controller: 'TaskListController'
   }).
   when('/users/:_id', {
-    templateUrl: 'partials/userdetail.html',
+    templateUrl: './partials/userdetail.html',
     controller: 'UserDetailController'
   }).
   when('/tasks/:_id', {
-    templateUrl: 'partials/taskdetail.html',
+    templateUrl: './partials/taskdetail.html',
     controller: 'TaskDetailController'
   }).
   when('/adduser', {
-    templateUrl: 'partials/adduser.html',
+    templateUrl: './partials/adduser.html',
     controller: 'AddUserController'
   }).
   when('/addtask', {
-    templateUrl: 'partials/addtask.html',
+    templateUrl: './partials/addtask.html',
     controller: 'AddTaskController'
   }).  
   when('/edittask/:_id', {
-    templateUrl: 'partials/edittask.html',
+    templateUrl: './partials/edittask.html',
     controller: 'EditTaskController'
   }).  
   otherwise({
