@@ -235,12 +235,13 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$http', 'CommonData',
   //Task inputs:
   $scope.newTask = { name: "", deadline: "", description: "", assignedUserName: "unassigned", assignedUser: ""};
 
-  $scope.selectedUser = "";
+  $scope.selectedUser = { _id: "", name: "unassigned"};
   $scope.displayText = "";
 
   // dropdown menu to select assignment:
   CommonData.getUsers().success(function(data){
       $scope.users = data.data; //data returns message+data, data.data just returns data component
+      $scope.users.unshift( $scope.selectedUser );
     })
   .error(function(err){
     console.log(err);
@@ -473,7 +474,7 @@ mp4Controllers.controller('EditTaskController', ['$scope', 'CommonData', '$windo
       // dropdown menu to select assignment:
       CommonData.getUsers().success(function(data){
           $scope.users = data.data; //data returns message+data, data.data just returns data component
-          $scope.users.push( { _id: "", name: "unassigned"} )
+          $scope.users.unshift( { _id: "", name: "unassigned"} );
           $scope.selectedUser = $scope.users.filter(function (user) { return user._id === $scope.task.assignedUser; })[0];
           console.log("orig selectedUser = " + $scope.selectedUser);
         }).error(function(err){
@@ -579,7 +580,8 @@ mp4Controllers.controller('EditTaskController', ['$scope', 'CommonData', '$windo
         }
           $scope.task.assignedUser = $scope.selectedUser._id;
           $scope.task.assignedUserName = $scope.selectedUser.name;
-          $scope.task.completed = $scope.completed;
+          //$scope.task.completed = $scope.completed;
+          console.log($scope.task.completed)
 
         }
       }
